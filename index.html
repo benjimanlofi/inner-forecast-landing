@@ -23,6 +23,10 @@
       --cloud: rgba(255, 255, 255, 0.85);
       --glow: rgba(255, 233, 178, 0.65);
       --hero-text: #26323f;
+      --tease-top: #26323f;
+      --tease-bottom: #1d2733;
+      --tease-text: #eef2f8;
+      --tease-muted: #aebbcd;
 
       --stormy: #57597a;
       --rainy: #527ab3;
@@ -44,6 +48,8 @@
         --cloud: rgba(158, 172, 204, 0.16);
         --glow: rgba(140, 155, 200, 0.30);
         --hero-text: #eef0f4;
+        --tease-top: #171e28;
+        --tease-bottom: #10151d;
       }
     }
 
@@ -64,7 +70,8 @@
       position: relative;
       overflow: hidden;
       background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 62%, var(--bg) 100%);
-      min-height: 78vh;
+      /* Sized by its content, capped so big displays never stretch it into a void. */
+      min-height: clamp(540px, 72vh, 780px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -105,7 +112,7 @@
       .glow { animation: none; }
     }
 
-    .hero-inner { position: relative; padding: 48px 28px; max-width: 620px; }
+    .hero-inner { position: relative; padding: 72px 28px 64px; max-width: 640px; }
     .dots { display: flex; gap: 9px; justify-content: center; }
     .dots span { width: 11px; height: 11px; border-radius: 50%; }
     .dots .s1 { background: var(--stormy); } .dots .s2 { background: var(--rainy); }
@@ -115,16 +122,44 @@
     h1 { margin: 24px 0 12px; font-size: clamp(2.4rem, 6vw, 3.4rem); font-weight: 700; letter-spacing: -0.02em; color: var(--hero-text); }
     .tagline { margin: 0 auto; color: var(--hero-text); opacity: 0.78; font-size: 1.2rem; max-width: 28rem; }
     .meta { margin: 20px 0 0; color: var(--hero-text); opacity: 0.6; font-size: 0.85rem; letter-spacing: 0.02em; }
+
+    .hero-actions {
+      margin-top: 28px;
+      display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap;
+    }
     .store {
-      display: inline-block; margin-top: 26px; padding: 12px 24px; border-radius: 999px;
+      display: inline-block; padding: 13px 26px; border-radius: 999px;
       background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; font-size: 0.98rem;
       box-shadow: 0 10px 26px rgba(38, 39, 31, 0.16);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
+    .store:hover { transform: translateY(-1px); box-shadow: 0 14px 30px rgba(38, 39, 31, 0.2); }
     @media (prefers-color-scheme: dark) { .store { color: #101311; } }
 
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 18px; border-radius: 999px;
+      font-size: 0.88rem; font-weight: 600; text-decoration: none;
+      color: var(--hero-text);
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(6px);
+      transition: transform 0.25s ease;
+    }
+    .badge:hover { transform: translateY(-1px); }
+    .badge .pulse-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--sunny);
+      animation: pulse 2.6s ease-in-out infinite;
+    }
+    @media (prefers-color-scheme: dark) {
+      .badge { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.16); }
+    }
+
     /* ---------- Calm content ---------- */
-    main { width: min(880px, calc(100% - 48px)); margin: 0 auto; }
-    section { padding: 52px 0 8px; }
+    main { width: min(920px, calc(100% - 48px)); margin: 0 auto; }
+    section { padding: 72px 0 0; }
+    section:first-of-type { padding-top: 44px; }
     h2 {
       margin: 0 0 22px; font-size: 0.78rem; font-weight: 700;
       letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);
@@ -132,24 +167,92 @@
 
     .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
     .card {
-      background: var(--card); border-radius: 22px; padding: 20px;
-      box-shadow: 0 8px 26px rgba(38, 39, 31, 0.07);
+      background: var(--card); border-radius: 22px; padding: 22px;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 26px rgba(38, 39, 31, 0.06);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    @media (prefers-color-scheme: dark) { .card { box-shadow: 0 8px 26px rgba(0,0,0,0.3); } }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgba(38, 39, 31, 0.1); }
+    @media (prefers-color-scheme: dark) {
+      .card { box-shadow: 0 8px 26px rgba(0,0,0,0.3); }
+      .card:hover { box-shadow: 0 14px 32px rgba(0,0,0,0.42); }
+    }
     .card .icon {
-      width: 38px; height: 38px; border-radius: 50%;
+      width: 38px; height: 38px; border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       font-size: 17px; margin-bottom: 12px;
     }
     .card h3 { margin: 0 0 4px; font-size: 1.02rem; font-weight: 700; }
     .card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
 
+    /* Editorial split: label column beside the prose, so wide screens don't
+       leave a hollow right side. Stacks cleanly on phones. */
+    .split { display: grid; grid-template-columns: 1fr; gap: 6px 56px; }
+    @media (min-width: 720px) {
+      .split { grid-template-columns: 220px 1fr; align-items: start; }
+      .split h2 { margin-top: 6px; }
+    }
     .prose { max-width: 620px; }
     .prose p { color: var(--muted); margin: 0 0 14px; }
     .prose p:last-child { margin-bottom: 0; }
+    .prose strong { color: var(--text); font-weight: 650; }
+
+    /* ---------- 2.0 tease ---------- */
+    .tease {
+      position: relative; overflow: hidden;
+      margin-top: 72px;
+      border-radius: 30px;
+      padding: 44px 36px 40px;
+      background: linear-gradient(165deg, var(--tease-top) 0%, var(--tease-bottom) 100%);
+      color: var(--tease-text);
+    }
+    .tease::before {
+      content: "";
+      position: absolute; top: -120px; right: -80px;
+      width: 320px; height: 320px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(222,148,56,0.35) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .tease::after {
+      content: "";
+      position: absolute; bottom: -140px; left: -60px;
+      width: 300px; height: 300px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(71,158,161,0.28) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .tease .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin: 0 0 16px; font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--sunny);
+    }
+    .tease .eyebrow .pulse-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--sunny);
+      animation: pulse 2.6s ease-in-out infinite;
+    }
+    .tease h3 {
+      position: relative;
+      margin: 0 0 12px; font-size: clamp(1.6rem, 4vw, 2.1rem);
+      font-weight: 700; letter-spacing: -0.015em;
+    }
+    .tease > p {
+      position: relative;
+      margin: 0; max-width: 540px; color: var(--tease-muted); font-size: 1.02rem;
+    }
+    .tease-chips {
+      position: relative;
+      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px;
+    }
+    .tease-chips span {
+      padding: 9px 16px; border-radius: 999px;
+      font-size: 0.88rem; font-weight: 600;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
 
     footer {
-      margin-top: 56px; padding: 36px 0 70px;
+      margin-top: 88px; padding: 36px 0 70px;
       border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem;
     }
     footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
@@ -182,7 +285,10 @@
       <h1>Inner Forecast</h1>
       <p class="tagline">A calm, private way to notice how you feel, in the language of weather.</p>
       <p class="meta">No subscription · Nothing leaves your device</p>
-      <a class="store" href="https://apps.apple.com/us/app/inner-forecast/id6763629982">On the App Store</a>
+      <div class="hero-actions">
+        <a class="store" href="https://apps.apple.com/us/app/inner-forecast/id6763629982">On the App Store</a>
+        <a class="badge" href="#two-point-oh"><span class="pulse-dot" aria-hidden="true"></span>2.0 is on the way</a>
+      </div>
     </div>
   </header>
 
@@ -203,7 +309,7 @@
         <div class="card">
           <div class="icon" style="background: rgba(71,158,161,0.14); color: var(--breezy);">✚</div>
           <h3>A First Aid Kit</h3>
-          <p>Breathing, grounding, naming a feeling, writing it out, tiny resets, and affirmations.</p>
+          <p>Breathing, grounding, naming a feeling, tiny resets, and affirmations for hard moments.</p>
         </div>
         <div class="card">
           <div class="icon" style="background: rgba(222,148,56,0.14); color: var(--sunny);">✎</div>
@@ -221,29 +327,47 @@
           <p>Soft weather ambience, gentle haptics, six colour themes, and full Dark Mode.</p>
         </div>
       </div>
-    </section>
 
-    <section>
-      <h2>Why I made it</h2>
-      <div class="prose">
-        <p>Most mood apps ask you to keep streaks and come back every day or feel like you have failed. That never helped me. It just became one more thing to keep up with.</p>
-        <p>So I built Inner Forecast around a gentler idea: feelings move like weather. You do not need to fix the sky to notice it. You just look up, name it kindly, and carry on.</p>
+      <div class="tease" id="two-point-oh">
+        <p class="eyebrow"><span class="pulse-dot" aria-hidden="true"></span>Coming in 2.0</p>
+        <h3>Make it yours.</h3>
+        <p>The biggest update yet is nearly here. A ground-up redesign, and a new arranging mode that lets you shape the app in place: drag, add, remove, and reorder your cards, your History, and your tabs. Inner Forecast, just how you like it.</p>
+        <div class="tease-chips">
+          <span>Arrange the app in place</span>
+          <span>A calmer redesign</span>
+          <span>A clearer History</span>
+          <span>Same privacy, always</span>
+        </div>
       </div>
     </section>
 
     <section>
-      <h2>No subscription</h2>
-      <div class="prose">
-        <p>No subscription, no ads, no account, no trackers, and no data selling. There is nothing to sign up for and no server collecting anything.</p>
-        <p>Your wellbeing should not sit behind a monthly fee. Inner Forecast is £1.99 and then it's yours, forever.</p>
+      <div class="split">
+        <h2>Why I made it</h2>
+        <div class="prose">
+          <p>Most mood apps ask you to keep streaks and come back every day or feel like you have failed. That never helped me. It just became one more thing to keep up with.</p>
+          <p>So I built Inner Forecast around a gentler idea: feelings move like weather. You do not need to fix the sky to notice it. You just look up, name it kindly, and carry on.</p>
+        </div>
       </div>
     </section>
 
     <section>
-      <h2>Private by design</h2>
-      <div class="prose">
-        <p>Everything you log stays on your device, encrypted, and kept out of iCloud and backups. The app makes no network requests for its core features and uses no third party code.</p>
-        <p>Apple Health is optional and off by default. When on, the app only adds the check-ins you create and never reads your Health data.</p>
+      <div class="split">
+        <h2>No subscription</h2>
+        <div class="prose">
+          <p>No subscription, no ads, no account, no trackers, and no data selling. There is nothing to sign up for and no server collecting anything.</p>
+          <p>Your wellbeing should not sit behind a monthly fee. Inner Forecast is <strong>£1.99 and then it's yours, forever</strong>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="split">
+        <h2>Private by design</h2>
+        <div class="prose">
+          <p>Everything you log stays on your device, encrypted, and kept out of iCloud and backups. The app makes no network requests for its core features and uses no third party code.</p>
+          <p>Apple Health is optional and off by default. When on, the app only adds the check-ins you create and never reads your Health data.</p>
+        </div>
       </div>
     </section>
 
