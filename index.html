@@ -795,7 +795,7 @@
       <p class="hero-lead">A quiet place to notice how you feel, using the familiar language of weather.</p>
       <div class="hero-actions">
         <a class="store" href="https://apps.apple.com/us/app/inner-forecast/id6763629982">View on the App Store</a>
-        <a class="ghost" href="#two-point-oh">New in 2.0</a>
+        <a class="ghost" href="#two-point-oh" id="new-in-two">New in 2.0</a>
       </div>
       <p class="hero-meta">Independent · Private · Made for iPhone</p>
     </div>
@@ -811,7 +811,7 @@
           <span>Arrange it in place</span>
           <span>Shape your History</span>
           <span>Choose your own theme</span>
-          <span>Private as before</span>
+          <span>Still entirely private.</span>
         </div>
       </div>
     </section>
@@ -899,6 +899,11 @@
     </div>
     <p class="foot-note">Inner Forecast is a companion for everyday emotions, not a substitute for professional support. &copy; 2026 Inner Forecast</p>
   </footer>
-
+<script>
+  document.getElementById('new-in-two').addEventListener('click', function (e) {
+    e.preventDefault();
+    document.getElementById('two-point-oh').scrollIntoView({ behavior: 'smooth' });
+  });
+</script>
 </body>
 </html>
