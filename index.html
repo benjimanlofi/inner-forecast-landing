@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Inner Forecast · Check the weather inside</title>
-  <meta name="description" content="A calm, private way to notice how you feel, in the language of weather. Yours alone, and nothing leaves your device.">
+  <meta name="description" content="A quiet place to notice how you feel, in the language of weather. Nothing leaves your device.">
   <meta name="theme-color" content="#bcd8ee">
   <meta property="og:title" content="Inner Forecast">
-  <meta property="og:description" content="A calm, private way to notice how you feel, in the language of weather.">
+  <meta property="og:description" content="A quiet place to notice how you feel, in the language of weather.">
   <meta property="og:type" content="website">
   <style>
     :root {
@@ -20,9 +20,11 @@
       --night-text: #f7f9fa;
       --night-muted: #71808a;
       --card: transparent;
-      --sky-top: #c9e2f0;
-      --sky-mid: #edf3f4;
-      --cloud: rgba(255, 255, 255, 0.7);
+
+      --wash-warm: rgba(231, 166, 75, 0.30);
+      --wash-soft: rgba(154, 174, 213, 0.16);
+      --cloud: #ffffff;
+      --cloud-alpha: 0.66;
       --glow: rgba(255, 214, 145, 0.48);
       --hero-text: #23323b;
       --page: min(1120px, calc(100% - 56px));
@@ -40,8 +42,6 @@
       --sunny: #e7a64b;
     }
 
-    /* One dark palette, declared once. Every rule below reads these variables,
-       so nothing needs a second dark override. */
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #0d1014;
@@ -52,9 +52,10 @@
         --night-text: #10151a;
         --night-muted: #55636d;
         --card: transparent;
-        --sky-top: #16202c;
-        --sky-mid: #131a22;
-        --cloud: rgba(180, 199, 219, 0.13);
+        --wash-warm: rgba(231, 166, 75, 0.17);
+        --wash-soft: rgba(116, 113, 161, 0.14);
+        --cloud: #9db2cb;
+        --cloud-alpha: 0.10;
         --glow: rgba(120, 148, 196, 0.3);
         --hero-text: #eaf0f4;
         --two-bg:
@@ -85,7 +86,6 @@
     ::selection { background: rgba(222, 148, 56, 0.25); }
     [id] { scroll-margin-top: 40px; }
 
-    /* ---------- Nav ---------- */
     .nav {
       position: absolute;
       inset: 0 0 auto;
@@ -125,11 +125,10 @@
     }
     .nav-cta:hover { transform: translateY(-1px); }
 
-    /* ---------- Hero ---------- */
     .hero {
       position: relative;
       overflow: hidden;
-      background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 58%, var(--bg) 100%);
+      background: var(--bg);
       min-height: clamp(600px, 88vh, 860px);
       display: flex;
       align-items: center;
@@ -225,7 +224,7 @@
       padding: 15px 30px;
       border-radius: 999px;
       background: var(--night);
-      /* Pairs with --night, so the label inverts with the pill in dark mode. */
+
       color: var(--night-text);
       text-decoration: none;
       font-weight: 650;
@@ -257,7 +256,6 @@
       opacity: 0.6;
     }
 
-    /* ---------- Page rhythm ---------- */
     main { width: var(--page); margin: 0 auto; }
     .kicker {
       margin: 0 0 14px;
@@ -277,7 +275,6 @@
       text-wrap: balance;
     }
 
-    /* ---------- 2.0 band ---------- */
     .two {
       position: relative;
       overflow: hidden;
@@ -330,7 +327,6 @@
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
-    /* ---------- Features ---------- */
     .features { padding-top: 96px; }
     .cards {
       margin-top: 34px;
@@ -347,17 +343,9 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(35, 36, 29, 0.09); }
-    .card .icon {
-      width: 42px; height: 42px;
-      border-radius: 13px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-      margin-bottom: 16px;
-    }
     .card h3 { margin: 0 0 6px; font-size: 1.04rem; font-weight: 700; letter-spacing: -0.015em; }
     .card p { margin: 0; color: var(--muted); font-size: 0.94rem; line-height: 1.55; }
 
-    /* ---------- Why ---------- */
     .why { padding-top: 110px; }
     .why-grid {
       display: grid;
@@ -371,7 +359,6 @@
     .why-prose p { margin: 0 0 14px; color: var(--muted); }
     .why-prose p:last-child { margin: 0; }
 
-    /* ---------- Principles ---------- */
     .principles { padding-top: 110px; }
     .trio {
       margin-top: 34px;
@@ -397,7 +384,6 @@
     }
     .trio p { margin: 0; color: var(--muted); font-size: 0.93rem; line-height: 1.55; }
 
-    /* ---------- Close ---------- */
     .close {
       margin-top: 120px;
       text-align: center;
@@ -424,7 +410,6 @@
     .foot-links { display: flex; gap: 20px; flex-wrap: wrap; }
     .foot-note { max-width: 420px; }
 
-    /* Editorial layer: quieter type, hairline rules, less card chrome. */
     body {
       background:
         radial-gradient(circle at 8% 50%, rgba(155, 167, 217, 0.055), transparent 25%),
@@ -461,50 +446,29 @@
     .hero {
       min-height: clamp(700px, 92vh, 900px);
       background:
-        radial-gradient(circle at 84% 10%, rgba(255, 228, 177, 0.3), transparent 23%),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.22), transparent 48%),
-        linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 64%, var(--bg) 100%);
-    }
-    .hero::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      pointer-events: none;
-      mix-blend-mode: overlay;
-      opacity: 0.6;
-    }
-    .hero::before {
-      content: "";
-      position: absolute;
-      top: 14%;
-      right: 5%;
-      width: min(42vw, 560px);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 43% 38%, rgba(255, 255, 255, 0.62), transparent 25%),
-        radial-gradient(circle, rgba(154, 174, 213, 0.18), rgba(255, 214, 145, 0.08) 43%, transparent 70%);
-      filter: blur(2px);
-      pointer-events: none;
+        radial-gradient(ellipse 54% 64% at 62% 15%, var(--wash-warm), transparent 66%),
+        linear-gradient(180deg, transparent 52%, var(--wash-soft) 100%),
+        var(--bg);
     }
     .glow {
-      top: -22vmin;
-      right: -12vmin;
-      width: 72vmin;
-      height: 72vmin;
-      opacity: 0.82;
+      top: -16vmin;
+      right: auto;
+      left: 62%;
+      transform: translateX(-50%);
+      width: 56vmin;
+      height: 56vmin;
+      opacity: 0.7;
     }
-    /* The living sky, quietly: soft, slow, and blurred back so it reads as
-       atmosphere behind the type rather than illustration on top of it. */
+
     .cloud {
-      opacity: 0.5;
-      filter: blur(1.5px);
-      mix-blend-mode: soft-light;
+      opacity: var(--cloud-alpha);
+      filter: blur(7px);
     }
-    .c1 { width: 460px; top: 16%; animation-duration: 190s; animation-delay: -40s; }
-    .c2 { width: 300px; top: 46%; animation-duration: 150s; animation-delay: -95s; opacity: 0.34; }
-    .c3 { width: 380px; top: 70%; animation-duration: 165s; animation-delay: -20s; opacity: 0.26; }
+    .c1 { width: 430px; top: 11%; animation-duration: 190s; animation-delay: -40s; }
+    .c2 { width: 300px; top: 37%; animation-duration: 150s; animation-delay: -95s;
+          opacity: calc(var(--cloud-alpha) * 0.72); }
+    .c3 { width: 360px; top: 64%; animation-duration: 165s; animation-delay: -20s;
+          opacity: calc(var(--cloud-alpha) * 0.5); }
     .hero-inner {
       padding: 158px 0 116px;
       max-width: 1120px;
@@ -597,20 +561,40 @@
     .chips span:first-child { padding-left: 0; }
     .chips span + span { border-left: 1px solid var(--line); }
 
+    .scale { padding-top: 132px; }
+    .scale-note { margin: 16px 0 0; max-width: 480px; color: var(--muted); }
+    .scale-row {
+      margin-top: 48px;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .scale-row > div { padding: 28px 18px 30px 0; }
+    .scale-row > div + div { padding-left: 22px; border-left: 1px solid var(--line); }
+    .scale-row .dot {
+      display: block;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      margin-bottom: 18px;
+    }
+    .scale-row .s1 { background: var(--stormy); } .scale-row .s2 { background: var(--rainy); }
+    .scale-row .s3 { background: var(--cloudy); } .scale-row .s4 { background: var(--breezy); }
+    .scale-row .s5 { background: var(--partly); } .scale-row .s6 { background: var(--sunny); }
+    .scale-row h3 { margin: 0 0 5px; font-size: 0.95rem; font-weight: 650; letter-spacing: -0.012em; }
+    .scale-row p { margin: 0; color: var(--muted); font-size: 0.85rem; line-height: 1.5; }
+
     .features { padding-top: 138px; }
     .cards {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0 58px;
+      gap: 0;
       margin-top: 46px;
       border-top: 1px solid var(--line);
     }
+
     .card {
-      display: grid;
-      grid-template-columns: 42px 1fr;
-      align-content: start;
-      column-gap: 19px;
-      min-height: 158px;
-      padding: 30px 0 34px;
+      padding: 32px 46px 36px 0;
       border: 0;
       border-bottom: 1px solid var(--line);
       border-radius: 0;
@@ -618,25 +602,17 @@
       box-shadow: none;
       transition: color 0.25s ease;
     }
+    .card:nth-child(even) {
+      padding-right: 0;
+      padding-left: 46px;
+      border-left: 1px solid var(--line);
+    }
     .card:hover {
       transform: none;
       box-shadow: none;
     }
-    .card .icon {
-      grid-row: 1 / span 2;
-      display: grid;
-      place-items: center;
-      width: 34px;
-      height: 34px;
-      margin: 1px 0 0;
-      border: 1px solid var(--line);
-      border-radius: 50%;
-      background: transparent;
-      color: var(--muted);
-      font-size: 0.66rem;
-    }
-    .card h3 { grid-column: 2; margin-bottom: 8px; font-weight: 650; }
-    .card p { grid-column: 2; max-width: 410px; line-height: 1.65; }
+    .card h3 { margin-bottom: 8px; font-weight: 650; }
+    .card p { max-width: 430px; line-height: 1.65; }
 
     .why { padding-top: 146px; }
     .why-grid {
@@ -661,8 +637,8 @@
     }
 
     .principles { padding-top: 138px; }
-    .trio { margin-top: 42px; }
-    .trio > div { padding-top: 34px; padding-bottom: 16px; }
+    .trio { margin-top: 42px; border-bottom: 1px solid var(--line); }
+    .trio > div { padding-top: 34px; padding-bottom: 34px; }
     .trio .big { font-size: 1.72rem; font-weight: 650; }
     .trio p { line-height: 1.65; }
 
@@ -695,9 +671,16 @@
       .chips { grid-template-columns: 1fr; margin-top: 36px; padding-top: 8px; }
       .chips span { min-height: 0; padding: 16px 0; }
       .chips span + span { border-left: 0; border-top: 1px solid var(--line); }
+      .scale { padding-top: 104px; }
+      .scale-row { grid-template-columns: repeat(2, 1fr); margin-top: 34px; }
+      .scale-row > div { padding: 22px 16px 18px 0; border-bottom: 1px solid var(--line); }
+      .scale-row > div + div { padding-left: 0; border-left: 0; }
+      .scale-row > div:nth-child(even) { padding-left: 22px; border-left: 1px solid var(--line); }
+      .scale-row .dot { margin-bottom: 12px; }
       .features { padding-top: 102px; }
       .cards { grid-template-columns: 1fr; gap: 0; margin-top: 36px; }
-      .card { min-height: 0; padding: 28px 0 31px; }
+      .card { padding: 28px 0 31px; }
+      .card:nth-child(even) { padding-left: 0; border-left: 0; }
       .why { padding-top: 106px; }
       .why-grid {
         grid-template-columns: 1fr;
@@ -715,10 +698,10 @@
       .hero-actions { align-items: flex-start; flex-direction: column; }
       .store { text-align: center; }
       .ghost { margin-left: 2px; }
-      .card { grid-template-columns: 36px 1fr; column-gap: 15px; }
-      .card .icon { width: 30px; height: 30px; }
+      .scale-row { grid-template-columns: 1fr; }
+      .scale-row > div:nth-child(even) { padding-left: 0; border-left: 0; }
     }
-  </style>
+</style>
 </head>
 <body>
 
@@ -747,12 +730,12 @@
     <div class="hero-inner">
       <p class="eyebrow"><span class="dots" aria-hidden="true"><span class="s1"></span><span class="s2"></span><span class="s3"></span><span class="s4"></span><span class="s5"></span><span class="s6"></span></span>A private mood journal</p>
       <h1>Some days are sunny.<br><span class="soft">Some are stormy.</span></h1>
-      <p class="hero-lead">A quiet place to notice how you feel, using the familiar language of weather.</p>
+      <p class="hero-lead">A quiet place to notice how you feel, in the language of weather.</p>
       <div class="hero-actions">
         <a class="store" href="https://apps.apple.com/us/app/inner-forecast/id6763629982">View on the App Store</a>
         <a class="ghost" href="#two-point-oh">New in 2.0</a>
       </div>
-      <p class="hero-meta">Independent · Private · Made for iPhone</p>
+      <p class="hero-meta">£1.99 on the App Store. No subscription, no account.</p>
     </div>
   </header>
 
@@ -760,50 +743,48 @@
     <section id="two-point-oh">
       <div class="two">
         <p class="kicker">2.0</p>
-        <h2 class="display">Refined, and yours to shape.</h2>
-        <p>Version 2.0 refines the experience without making it busier. Arrange the app around the way you actually use it.</p>
+        <h2 class="display">Yours to rearrange</h2>
+        <p>Drag the sections where you want them, drop the ones you never open, and set History up the way you actually read it.</p>
         <div class="chips">
           <span>Arrange it in place</span>
           <span>Shape your History</span>
           <span>Choose your own theme</span>
-          <span>Private as before</span>
+          <span>Still nothing leaves your phone</span>
         </div>
       </div>
     </section>
 
+    <section class="scale">
+      <h2 class="display">Six kinds of weather</h2>
+      <p class="scale-note">Pick the one that fits, then say how strong it feels. That's the whole thing.</p>
+      <div class="scale-row">
+        <div><span class="dot s1" aria-hidden="true"></span><h3>Stormy</h3><p>Loud and charged</p></div>
+        <div><span class="dot s2" aria-hidden="true"></span><h3>Rainy</h3><p>Heavy but moving</p></div>
+        <div><span class="dot s3" aria-hidden="true"></span><h3>Cloudy</h3><p>Low and quiet</p></div>
+        <div><span class="dot s4" aria-hidden="true"></span><h3>Breezy</h3><p>Restless but moving</p></div>
+        <div><span class="dot s5" aria-hidden="true"></span><h3>Partly Cloudy</h3><p>Mixed but open</p></div>
+        <div><span class="dot s6" aria-hidden="true"></span><h3>Sunny</h3><p>Clear and light</p></div>
+      </div>
+    </section>
+
     <section class="features">
-      <p class="kicker">Inside Inner Forecast</p>
-      <h2 class="display">Made for peace and quiet.</h2>
+      <h2 class="display">What's inside</h2>
       <div class="cards">
         <div class="card">
-          <div class="icon">01</div>
-          <h3>Log your inner weather</h3>
-          <p>Slide to the condition that fits, set how strong it feels, add a note if you want.</p>
+          <h3>Look back without keeping up</h3>
+          <p>A week at a glance, a summary for each day, and a recap on Sundays. Nothing counts how many days in a row you managed.</p>
         </div>
         <div class="card">
-          <div class="icon">02</div>
-          <h3>Look back gently</h3>
-          <p>A soft week view, daily summaries, and a weekly recap. No streaks, no scores.</p>
+          <h3>A First Aid Kit for the hard days</h3>
+          <p>Box breathing, 4-7-8, and the physiological sigh. Grounding, naming what you feel, small resets, and a deck of affirmations you can add your own lines to.</p>
         </div>
         <div class="card">
-          <div class="icon">03</div>
-          <h3>A First Aid Kit</h3>
-          <p>Breathing, grounding, naming a feeling, tiny resets, and affirmations for hard moments.</p>
+          <h3>A journal, when a note isn't enough</h3>
+          <p>Room to write properly, under its own drifting sky. Entries keep the weather you were in when you wrote them.</p>
         </div>
         <div class="card">
-          <div class="icon">04</div>
-          <h3>A private journal</h3>
-          <p>A quieter space to write more than a note, under its own drifting sky.</p>
-        </div>
-        <div class="card">
-          <div class="icon">05</div>
-          <h3>Yours alone</h3>
-          <p>Face ID lock, optional Apple Health, gentle reminders, quick logging from Siri.</p>
-        </div>
-        <div class="card">
-          <div class="icon">06</div>
-          <h3>Considered throughout</h3>
-          <p>Cosy weather ambience, gentle haptics, themes you can build yourself.</p>
+          <h3>Locked to your device</h3>
+          <p>Face ID if you want it, encrypted on disk, and kept out of iCloud and backups. There's no account to make, because there's nowhere to send anything.</p>
         </div>
       </div>
     </section>
@@ -814,8 +795,8 @@
           <h2 class="display why-heading">Why I made it</h2>
         </div>
         <div class="why-prose">
-          <p>Most mood apps ask for streaks and daily check-ins, and make you feel like you have failed when life gets in the way. That never helped me. It became one more thing to keep up with.</p>
-          <p>So I built the gentler app I wanted: miss a week and nothing breaks, log twice an hour and nothing judges. It is just you, noticing.</p>
+          <p>Most mood apps ask for streaks and daily check-ins, and make you feel like you've failed when life gets in the way. That never helped me. It became one more thing to keep up with.</p>
+          <p>So I built the gentler app I wanted: miss a week and nothing breaks, log twice an hour and nothing judges. It's just you, noticing.</p>
         </div>
       </div>
     </section>
@@ -840,9 +821,9 @@
     </section>
 
     <section class="close">
-      <h2 class="display">A private place to check in.</h2>
+      <h2 class="display">Check the weather inside.</h2>
       <a class="store" href="https://apps.apple.com/us/app/inner-forecast/id6763629982">View on the App Store</a>
-      <p class="fine">Made for iPhone · £1.99 once · Nothing leaves your device</p>
+      <p class="fine">iPhone only. Bought once, at £1.99.</p>
     </section>
   </main>
 
